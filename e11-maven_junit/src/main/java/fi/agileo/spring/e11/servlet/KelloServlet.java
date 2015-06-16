@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fi.agileo.spring.e11.kello.GmtIsoKello;
+import fi.agileo.spring.e11.kello.InternetKelloLahde;
 import fi.agileo.spring.e11.kello.Kello;
 import fi.agileo.spring.e11.kello.SuomiKello;
 import fi.agileo.spring.e11.kello.SysteemiKelloLahde;
@@ -19,24 +21,26 @@ import fi.agileo.spring.e11.kello.SysteemiKelloLahde;
 public class KelloServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor. 
-     */
-    public KelloServlet() {
-    	super();
-    }
+	/**
+	 * Default constructor.
+	 */
+	public KelloServlet() {
+		super();
+	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		Kello kello = new SuomiKello(new SysteemiKelloLahde());
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
-		
+		Kello kello = new GmtIsoKello(new InternetKelloLahde());
+
 		request.setAttribute("pvm", kello.getPvm());
 		request.setAttribute("aika", kello.getAika());
-		request.getRequestDispatcher("WEB-INF/jsp/kello.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/jsp/kello.jsp").forward(request,
+				response);
 	}
 
 }

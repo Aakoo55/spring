@@ -49,13 +49,13 @@ tfoot tr td {
 	padding-right: 6px;
 }
 
-button {
+button, a {
+	background: #EEFFEE;
 	border: 3px;
 	border-color: #333333;
-	color: #333333;
-	background: #EEFFEE;
 	font-weight: bold;
 	font-size: large;
+	color: #333333;
 	border-style: solid;
 	-webkit-border-radius: 20px;
 	-moz-border-radius: 20px;
@@ -67,12 +67,24 @@ button {
 	cursor: pointer;
 }
 
+a, a:hover, a:link, a:visited, a:active {
+	text-decoration: none;
+}
+
+a:hover {
+	background: #FF5555;
+}
+
+button:hover {
+	background: #55FF55;
+}
+
 input {
 	border: 2px;
 	border-color: #333333;
 	color: #333333;
 	border-style: solid;
-	margin:0px;
+	margin: 0px;
 	vertical-align: middle;
 	font-weight: normal;
 	background: #FAFAFA;

@@ -2,6 +2,7 @@ package fi.agileo.spring.e11.kello;
 
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import fi.agileo.spring.e11.kello.InternetKelloLahde;
@@ -10,6 +11,7 @@ import static org.junit.Assert.*;
 public class InternetKelloLahdeTest {
 
 	@Test
+	@Ignore
 	public void testHaeAika() {
 		Date ajanhetki = new InternetKelloLahde().haeAjanhetki();
 		assertNotNull(ajanhetki);

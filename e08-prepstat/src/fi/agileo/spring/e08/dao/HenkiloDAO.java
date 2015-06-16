@@ -11,121 +11,171 @@ import java.util.List;
 import fi.agileo.spring.e08.bean.Henkilo;
 
 public class HenkiloDAO {
-	
+
 	/**
-	 * Konstruktori
-	 * lataa tietokantayhteyden ajurin
+	 * Konstruktori lataa tietokantayhteyden ajurin
 	 */
 	public HenkiloDAO() throws DAOPoikkeus {
 		try {
-			Class.forName(DBConnectionProperties.getInstance().getProperty("driver")).newInstance();
-		} catch(Exception e) {
+			Class.forName(
+					DBConnectionProperties.getInstance().getProperty("driver"))
+					.newInstance();
+		} catch (Exception e) {
 			throw new DAOPoikkeus("Tietokannan ajuria ei kyetty lataamaan.", e);
 		}
 	}
-	
+
 	/**
 	 * Avaa tietokantayhteyden
+	 * 
 	 * @return avatun tietokantayhteyden
-	 * @throws Exception Mikäli yhteyden avaaminen ei onnistu
+	 * @throws Exception
+	 *             Mikäli yhteyden avaaminen ei onnistu
 	 */
 	private Connection avaaYhteys() throws DAOPoikkeus {
-		
+
 		try {
-			return DriverManager.getConnection(
-					DBConnectionProperties.getInstance().getProperty("url"), 
-					DBConnectionProperties.getInstance().getProperty("username"),
-					DBConnectionProperties.getInstance().getProperty("password"));
+			return DriverManager.getConnection(DBConnectionProperties
+					.getInstance().getProperty("url"), DBConnectionProperties
+					.getInstance().getProperty("username"),
+					DBConnectionProperties.getInstance()
+							.getProperty("password"));
 		} catch (Exception e) {
 			throw new DAOPoikkeus("Tietokantayhteyden avaaminen epäonnistui", e);
 		}
 	}
-	
+
 	/**
 	 * Sulkee tietokantayhteyden
-	 * @param yhteys Suljettava yhteys
+	 * 
+	 * @param yhteys
+	 *            Suljettava yhteys
 	 */
 	private void suljeYhteys(Connection yhteys) throws DAOPoikkeus {
 		try {
 			if (yhteys != null && !yhteys.isClosed())
 				yhteys.close();
-		} catch(Exception e) {
-			throw new DAOPoikkeus("Tietokantayhteys ei jostain syystä suostu menemään kiinni.", e);
+		} catch (Exception e) {
+			throw new DAOPoikkeus(
+					"Tietokantayhteys ei jostain syystä suostu menemään kiinni.",
+					e);
 		}
 	}
-	
+
 	/**
 	 * Hakee kaikki henkilöt kannasta
+	 * 
 	 * @return listallinen henkilöitä
 	 */
-	public List<Henkilo> haeKaikki() throws DAOPoikkeus{		
-		
+	public List<Henkilo> haeKaikki() throws DAOPoikkeus {
+
 		ArrayList<Henkilo> henkilot = new ArrayList<Henkilo>();
-		
-		//avataan yhteys
+
+		// avataan yhteys
 		Connection yhteys = avaaYhteys();
-		
+
 		try {
-			
-			//suoritetaan haku
+
+			// suoritetaan haku
 			String sql = "select id, etunimi, sukunimi from henkilo";
 			Statement haku = yhteys.createStatement();
 			ResultSet tulokset = haku.executeQuery(sql);
-			
-			//käydään hakutulokset läpi
-			while(tulokset.next()) {
+
+			// käydään hakutulokset läpi
+			while (tulokset.next()) {
 				int id = tulokset.getInt("id");
 				String etunimi = tulokset.getString("etunimi");
 				String sukunimi = tulokset.getString("sukunimi");
-				
-				//lisätään henkilö listaan
+
+				// lisätään henkilö listaan
 				Henkilo h = new Henkilo(id, etunimi, sukunimi);
 				henkilot.add(h);
 			}
-			
-		} catch(Exception e) {
-			//JOTAIN VIRHETTÄ TAPAHTUI
+
+		} catch (Exception e) {
+			// JOTAIN VIRHETTÄ TAPAHTUI
 			throw new DAOPoikkeus("Tietokantahaku aiheutti virheen", e);
-		}finally {
-			//LOPULTA AINA SULJETAAN YHTEYS
+		} finally {
+			// LOPULTA AINA SULJETAAN YHTEYS
 			suljeYhteys(yhteys);
 		}
-		
-		System.out.println("HAETTIIN TIETOKANNASTA HENKILÖT: " +henkilot.toString());
-		
+
+		System.out.println("HAETTIIN TIETOKANNASTA HENKILÖT: "
+				+ henkilot.toString());
+
 		return henkilot;
 	}
 
-	
 	/**
 	 * Lisää henkilön tietokantaan
-	 * @param h Lisättävän henkilön tiedot
+	 * 
+	 * @param h
+	 *            Lisättävän henkilön tiedot
 	 */
-	public void lisaa(Henkilo h) throws DAOPoikkeus{
-			
-		//avataan yhteys
+	public void lisaa(Henkilo h) throws DAOPoikkeus {
+
+		// avataan yhteys
 		Connection yhteys = avaaYhteys();
-		
+
 		try {
-			
-			//suoritetaan haku
-			
-			//alustetaan sql-lause
+
+			// suoritetaan haku
+
+			// alustetaan sql-lause
 			String sql = "insert into henkilo(etunimi, sukunimi) values(?,?)";
 			PreparedStatement lause = yhteys.prepareStatement(sql);
-			
-			//täytetään puuttuvat tiedot
+
+			// täytetään puuttuvat tiedot
 			lause.setString(1, h.getEtunimi());
 			lause.setString(2, h.getSukunimi());
-			
-			//suoritetaan lause
+
+			// suoritetaan lause
 			lause.executeUpdate();
-			System.out.println("LISÄTTIIN HENKILÖ TIETOKANTAAN: "+h);
-		} catch(Exception e) {
-			//JOTAIN VIRHETTÄ TAPAHTUI
+			System.out.println("LISÄTTIIN HENKILÖ TIETOKANTAAN: " + h);
+		} catch (Exception e) {
+			// JOTAIN VIRHETTÄ TAPAHTUI
 			throw new DAOPoikkeus("Henkilön lisäämisyritys aiheutti virheen", e);
-		}finally {
-			//LOPULTA AINA SULJETAAN YHTEYS
+		} finally {
+			// LOPULTA AINA SULJETAAN YHTEYS
+			suljeYhteys(yhteys);
+		}
+
+	}
+
+	/**
+	 * Poistaa henkilön tietokannasta
+	 * 
+	 * @param h
+	 *            Poistettavan henkilon tiedot
+	 */
+	public void poista(int id) throws DAOPoikkeus {
+
+		// avataan yhteys
+		Connection yhteys = avaaYhteys();
+
+		try {
+			// alustetaan sql-lause
+			String sql = "delete from henkilo where id = ?";
+			PreparedStatement lause = yhteys.prepareStatement(sql);
+
+			// täytetään puuttuvat tiedot
+			lause.setInt(1, id);
+
+			// suoritetaan lause
+			if (lause.executeUpdate() == 0) {
+				System.out.println("HENKILÖÄ EI LÖYDY TIETOKANNASTA: " + id);
+				throw new DAOPoikkeus("Henkilöä ei löydy kannasta. Id=" + id);
+			} else {
+				System.out.println("POISTETTIIN HENKILÖ TIETOKANNASTA: " + id);
+			}
+
+		} catch (DAOPoikkeus e) {
+			throw e;
+		} catch (Exception e) {
+			// JOTAIN VIRHETTÄ TAPAHTUI
+			throw new DAOPoikkeus("Henkilön poistoyritys aiheutti virheen", e);
+		} finally {
+			// LOPULTA AINA SULJETAAN YHTEYS
 			suljeYhteys(yhteys);
 		}
 

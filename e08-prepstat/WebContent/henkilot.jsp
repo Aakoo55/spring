@@ -11,6 +11,9 @@
 <body>
 
 	<form action="henkilot" method="post">
+		<c:if test="${not empty error}">
+			<b style="color: red;"><c:out value="${error}"></c:out></b>
+		</c:if>
 		<table>
 			<caption>Henkilöt</caption>
 			<thead>
@@ -27,16 +30,20 @@
 						<td><c:out value="${henk.id}" /></td>
 						<td><c:out value="${henk.etunimi}" /></td>
 						<td><c:out value="${henk.sukunimi}" /></td>
-						<td>&nbsp;<!-- Tässä olisi hyvä paikka delete-napille --></td>
+						<td><a
+							href="?poista=true&id=<c:out value="${henk.id}"></c:out>"><b>-</b></a></td>
 					</tr>
 				</c:forEach>
 			</tbody>
 			<tfoot>
 				<tr>
 					<td>LISÄÄ</td>
-					<td><input type="text" name="etunimi" placeholder="etunimi..."/></td>
-					<td><input type="text" name="sukunimi" placeholder="sukunimi..."/></td>
-					<td><button type="submit"><b>+</b></button></td>
+					<td><input type="text" name="etunimi" placeholder="etunimi..." /></td>
+					<td><input type="text" name="sukunimi"
+						placeholder="sukunimi..." /></td>
+					<td><button type="submit">
+							<b>+</b>
+						</button></td>
 				</tr>
 			</tfoot>
 		</table>
